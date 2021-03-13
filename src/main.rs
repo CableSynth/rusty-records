@@ -43,7 +43,7 @@ fn main() -> Result<(), Error> {
 
         match b.unwrap() {
             b'q' => break Ok(()),
-            a => (),
+            a => write!(terminal, "{}", a),
         };
         // backend.flush();
     }
