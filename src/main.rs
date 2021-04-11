@@ -1,7 +1,8 @@
 #[allow(dead_code)]
-pub mod util;
+mod util;
 
-use crate::util::event::{Events, Event};
+use util::event::{Event, Events};
+
 use std::{error::Error, io};
 use termion::{event::Key, input::MouseTerminal, raw::IntoRawMode, screen::AlternateScreen};
 use tui::{
@@ -46,7 +47,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let stdout = AlternateScreen::from(stdout);
     let backend = TermionBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-
+    
     // Setup event handlers
     let mut events = Events::new();
 
