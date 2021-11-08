@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let stdout = AlternateScreen::from(stdout);
     let backend = TermionBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-    
+
     // Setup event handlers
     let mut events = Events::new();
 
@@ -133,8 +133,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         chunks[1].y + 1,
                     )
                 }
-                InputMode::Music => 
-                    {}
+                InputMode::Music => {}
             }
 
             let messages: Vec<ListItem> = app
