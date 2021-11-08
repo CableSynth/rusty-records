@@ -3,7 +3,7 @@ mod util;
 
 use util::event::{Event, Events};
 
-use std::{error::Error, io};
+use std::{error::Error, io, fs};
 use termion::{event::Key, input::MouseTerminal, raw::IntoRawMode, screen::AlternateScreen};
 use tui::{
     backend::TermionBackend,
@@ -13,6 +13,7 @@ use tui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Terminal,
 };
+use rodio::{Decoder, OutputStream, source::Source};
 use unicode_width::UnicodeWidthStr;
 
 enum InputMode {
