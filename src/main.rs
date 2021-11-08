@@ -18,6 +18,7 @@ use unicode_width::UnicodeWidthStr;
 enum InputMode {
     Normal,
     Editing,
+    Music,
 }
 
 /// App holds the state of the application
@@ -77,7 +78,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         Span::styled("q", Style::default().add_modifier(Modifier::BOLD)),
                         Span::raw(" to exit, "),
                         Span::styled("e", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to start editing."),
+                        Span::raw(" to start editing, "),
+                        Span::raw("Press "),
+                        Span::styled("m", Style::default().add_modifier(Modifier::BOLD)),
+                        Span::raw(" to start playing."),
                     ],
                     Style::default().add_modifier(Modifier::RAPID_BLINK),
                 ),
@@ -91,6 +95,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                     ],
                     Style::default(),
                 ),
+                InputMode::Music => (
+                    vec![
+                        Span::raw("Press "),
+                        Span::styled("Q", Style::default().add_modifier(Modifier::BOLD)),
+                        Span::raw(" to stop playing , "),
+                        Span::styled("P", Style::default().add_modifier(Modifier::BOLD)),
+                        Span::raw(" to play the song"),
+                    ],
+                    Style::default(),
+                ),
             };
             let mut text = Text::from(Spans::from(msg));
             text.patch_style(style);
@@ -101,6 +115,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .style(match app.input_mode {
                     InputMode::Normal => Style::default(),
                     InputMode::Editing => Style::default().fg(Color::Yellow),
+                    InputMode::Music => Style::default().fg(Color::Red),
                 })
                 .block(Block::default().borders(Borders::ALL).title("Input"));
             f.render_widget(input, chunks[1]);
@@ -118,6 +133,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                         chunks[1].y + 1,
                     )
                 }
+                InputMode::Music => 
+                    {}
             }
 
             let messages: Vec<ListItem> = app
@@ -145,6 +162,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                     Key::Char('q') => {
                         break;
                     }
+                    Key::Char('m') => {
+                        app.input_mode = InputMode::Music;
+                        events.disable_exit_key();
+                    }
                     _ => {}
                 },
                 InputMode::Editing => match input {
@@ -158,6 +179,17 @@ fn main() -> Result<(), Box<dyn Error>> {
                         app.input.pop();
                     }
                     Key::Esc => {
+                        app.input_mode = InputMode::Normal;
+                        events.enable_exit_key();
+                    }
+                    _ => {}
+                },
+
+                InputMode::Music => match input {
+                    Key::Char('p') => {
+                        app.messages.push("playing Music".to_owned());
+                    }
+                    Key::Char('q') => {
                         app.input_mode = InputMode::Normal;
                         events.enable_exit_key();
                     }
