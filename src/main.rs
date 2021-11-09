@@ -13,7 +13,8 @@ use tui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Terminal,
 };
-use rodio::{Decoder, OutputStream, source::Source};
+use rodio::{Decoder, OutputStream, Sink};
+use rodio::source::{SineWave, Source};
 use unicode_width::UnicodeWidthStr;
 
 enum InputMode {
@@ -56,7 +57,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Create default app state
     let mut app = App::default();
 
+    // Get a output stream handle to the default physical sound device
+    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+    let sink = Sink::try_new(&stream_handle).unwrap();
+
+    //open file to test
+    
     loop {
+        let file = io::BufReader::new(fs::File::open("FileName").unwrap());
+        let source = Decoder::new(file).unwrap();
         // Draw UI
         terminal.draw(|f| {
             let chunks = Layout::default()
@@ -188,8 +197,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 InputMode::Music => match input {
                     Key::Char('p') => {
                         app.messages.push("playing Music".to_owned());
+                        sink.append(source);
                     }
                     Key::Char('q') => {
+                        sink.stop();
                         app.input_mode = InputMode::Normal;
                         events.enable_exit_key();
                     }
