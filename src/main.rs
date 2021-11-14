@@ -64,18 +64,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     //open file to test
     
     loop {
-        let file = io::BufReader::new(fs::File::open("FileName").unwrap());
+        let file = io::BufReader::new(fs::File::open("/home/caleb/Music/Amaranthe/HELIX [Explicit]/05 - Helix.mp3").unwrap());
         let source = Decoder::new(file).unwrap();
         // Draw UI
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .margin(2)
+                .margin(3)
                 .constraints(
-                    [
+                    [   
                         Constraint::Length(1),
                         Constraint::Length(3),
                         Constraint::Min(1),
+                        Constraint::Length(3),
                     ]
                     .as_ref(),
                 )
@@ -158,6 +159,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             let messages =
                 List::new(messages).block(Block::default().borders(Borders::ALL).title("Messages"));
             f.render_widget(messages, chunks[2]);
+
+            let test_block = Block::default()
+                .title("Block of test")
+                .borders(Borders::ALL);
+            f.render_widget(test_block, chunks[3]);
         })?;
 
         // Handle input
